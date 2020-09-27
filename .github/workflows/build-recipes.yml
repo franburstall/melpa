@@ -1,0 +1,22 @@
+name: build-recipes
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.6
+      uses: actions/setup-python@v1
+      with: { python-version: 3.6 }
+    - name: Install
+      run: |
+        sudo apt-get update
+        sudo apt-get install emacs && emacs --version
+        sudo apt-get install git mercurial texinfo
+        curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+        export PATH=$HOME/.cask/bin:$PATH
+        cask
+    - name: Run
+      run: |
+        git diff-tree --name-only --no-commit-id -r ${{ github.sha }}
